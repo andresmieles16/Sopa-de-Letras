@@ -48,7 +48,7 @@
             justify-content: center;
             align-items: center;
             background-color: #eaf1f1;
-            font-size: 24px; /* Aumenté el tamaño de la fuente aquí */
+            font-size: 24px;
             color: #333;
             cursor: pointer;
             border-radius: 5px;
@@ -125,7 +125,6 @@
             background-color: #aaa;
             cursor: not-allowed;
         }
-
     </style>
 </head>
 <body>
@@ -164,7 +163,7 @@
         function generarSopa() {
             sopa = Array.from({ length: tamaño }, () => Array(tamaño).fill(' '));
             palabras = listasPalabras[sopaActual];
-            palabrasEncontradas = [];
+            palabrasEncontradas = [...palabrasEncontradas]; // Mantener las palabras encontradas
 
             // Colocar las palabras en la sopa
             palabras.forEach(palabra => {
@@ -241,6 +240,9 @@
                 const palabraDiv = document.createElement('div');
                 palabraDiv.classList.add('palabra');
                 palabraDiv.textContent = palabra;
+                if (palabrasEncontradas.includes(palabra)) {
+                    palabraDiv.classList.add('tachada');
+                }
                 palabrasDiv.appendChild(palabraDiv);
             });
 
@@ -275,9 +277,9 @@
             // Verificar si la palabra seleccionada coincide con la palabra en la lista
             if (palabras.includes(palabraSeleccionada) && !palabrasEncontradas.includes(palabraSeleccionada)) {
                 palabrasEncontradas.push(palabraSeleccionada);
+
                 seleccion.forEach(s => {
                     s.celda.classList.add('seleccionada');
-                    s.celda.classList.remove('seleccionada');
                 });
 
                 // Marcar la palabra como tachada en la lista de palabras abajo
