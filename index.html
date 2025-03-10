@@ -103,11 +103,9 @@
             color: #4CAF50;
         }
 
-        .boton-siguiente {
-            margin-top: 30px;
+        .boton-siguiente, .boton-restaurar {
+            margin-top: 20px;
             padding: 12px 24px;
-            background-color: #4CAF50;
-            color: white;
             font-size: 16px;
             border: none;
             border-radius: 30px;
@@ -116,12 +114,27 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
+        .boton-siguiente {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .boton-restaurar {
+            background-color: #f44336;
+            color: white;
+        }
+
         .boton-siguiente:hover {
             background-color: #45a049;
             transform: scale(1.1);
         }
 
-        .boton-siguiente:disabled {
+        .boton-restaurar:hover {
+            background-color: #d32f2f;
+            transform: scale(1.1);
+        }
+
+        .boton-siguiente:disabled, .boton-restaurar:disabled {
             background-color: #aaa;
             cursor: not-allowed;
         }
@@ -137,6 +150,7 @@
     <div class="mensaje" id="mensaje"></div>
 
     <button class="boton-siguiente" id="botonSiguiente" onclick="cargarSopa()">Siguiente Sopa</button>
+    <button class="boton-restaurar" id="botonRestaurar" onclick="restaurarSeleccion()" disabled>Restaurar Selección</button>
 
     <script>
         const listasPalabras = [
@@ -151,7 +165,7 @@
             ['mujer', 'hombre', 'niña', 'niño', 'adulto', 'persona'],
             ['mesa', 'silla', 'sofá', 'televisión', 'puerta', 'ventana']
         ];
-        const tamaño = 10; // Tamaño de la cuadrícula
+        const tamaño = 10;
         const letras = 'abcdefghijklmnopqrstuvwxyz'.split('');
         let sopa = [];
         let seleccion = [];
@@ -163,7 +177,7 @@
         function generarSopa() {
             sopa = Array.from({ length: tamaño }, () => Array(tamaño).fill(' '));
             palabras = listasPalabras[sopaActual];
-            palabrasEncontradas = [...palabrasEncontradas]; // Mantener las palabras encontradas
+            palabrasEncontradas = [];
 
             // Colocar las palabras en la sopa
             palabras.forEach(palabra => {
@@ -240,9 +254,6 @@
                 const palabraDiv = document.createElement('div');
                 palabraDiv.classList.add('palabra');
                 palabraDiv.textContent = palabra;
-                if (palabrasEncontradas.includes(palabra)) {
-                    palabraDiv.classList.add('tachada');
-                }
                 palabrasDiv.appendChild(palabraDiv);
             });
 
@@ -264,6 +275,9 @@
                 celda.classList.remove('seleccionada');
             }
 
+            // Habilitar o deshabilitar el botón de restaurar
+            document.getElementById('botonRestaurar').disabled = seleccion.length === 0;
+
             if (seleccion.length > 1) {
                 verificarPalabra();
             }
@@ -277,9 +291,9 @@
             // Verificar si la palabra seleccionada coincide con la palabra en la lista
             if (palabras.includes(palabraSeleccionada) && !palabrasEncontradas.includes(palabraSeleccionada)) {
                 palabrasEncontradas.push(palabraSeleccionada);
-
                 seleccion.forEach(s => {
                     s.celda.classList.add('seleccionada');
+                    s.celda.classList.remove('seleccionada');
                 });
 
                 // Marcar la palabra como tachada en la lista de palabras abajo
@@ -307,6 +321,15 @@
                     palabraDiv.classList.add('tachada');
                 }
             });
+        }
+
+        // Función para restaurar la selección
+        function restaurarSeleccion() {
+            seleccion.forEach(s => {
+                s.celda.classList.remove('seleccionada');
+            });
+            seleccion = [];
+            document.getElementById('mensaje').textContent = '';
         }
 
         // Función para cargar la siguiente sopa
