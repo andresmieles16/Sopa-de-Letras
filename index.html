@@ -163,8 +163,30 @@
             ['sol', 'luna', 'estrella', 'planeta', 'galaxia', 'cometa'],
             ['coche', 'bicicleta', 'avión', 'barco', 'tren', 'autobús'],
             ['mujer', 'hombre', 'niña', 'niño', 'adulto', 'persona'],
-            ['mesa', 'silla', 'sofá', 'televisión', 'puerta', 'ventana']
+            ['mesa', 'silla', 'sofá', 'televisión', 'puerta', 'ventana'],
+            ['computadora', 'pantalla', 'teclado', 'ratón', 'software', 'hardware'],
+            ['flor', 'árbol', 'hoja', 'planta', 'raíz', 'ramo'],
+            ['fruta', 'verdura', 'cereal', 'pescado', 'carne', 'huevo'],
+            ['mar', 'río', 'lago', 'oceano', 'desierto', 'selva'],
+            ['aire', 'nieve', 'lluvia', 'nube', 'tormenta', 'viento'],
+            ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'fin de semana'],
+            ['rojo', 'verde', 'amarillo', 'azul', 'morado', 'rosa'],
+            ['papel', 'lápiz', 'cuaderno', 'mochila', 'pluma', 'tinta'],
+            ['taza', 'cuchara', 'tenedor', 'plato', 'vaso', 'cuchillo'],
+            ['pelota', 'balón', 'red', 'campo', 'jugador', 'gol'],
+            ['vacaciones', 'feriado', 'viaje', 'playa', 'montaña', 'relajación'],
+            ['alumno', 'maestro', 'clase', 'escuela', 'examen', 'libro'],
+            ['guitarra', 'piano', 'batería', 'violín', 'saxo', 'trumpeta'],
+            ['película', 'serie', 'documental', 'teatro', 'cines', 'actor'],
+            ['coche', 'autobús', 'tren', 'bicicleta', 'camión', 'avión'],
+            ['estrella', 'planeta', 'cometa', 'satélite', 'luna', 'sol'],
+            ['robo', 'delito', 'policía', 'criminal', 'juez', 'abogado'],
+            ['espejo', 'ventana', 'puerta', 'pared', 'suelo', 'techo'],
+            ['vino', 'cerveza', 'agua', 'jugos', 'refresco', 'leche'],
+            ['actor', 'actriz', 'director', 'película', 'teatro', 'cine'],
+            ['rayo', 'trueno', 'lluvia', 'tormenta', 'huracán', 'terremoto']
         ];
+
         const tamaño = 10;
         const letras = 'abcdefghijklmnopqrstuvwxyz'.split('');
         let sopa = [];
@@ -172,6 +194,24 @@
         let palabrasEncontradas = [];
         let palabras = [];
         let sopaActual = 0;
+
+        // Cargar progreso desde el almacenamiento local
+        function cargarProgreso() {
+            const progreso = JSON.parse(localStorage.getItem('sopaDeLetrasProgreso'));
+            if (progreso) {
+                sopaActual = progreso.sopaActual;
+                palabrasEncontradas = progreso.palabrasEncontradas;
+            }
+        }
+
+        // Guardar progreso en el almacenamiento local
+        function guardarProgreso() {
+            const progreso = {
+                sopaActual: sopaActual,
+                palabrasEncontradas: palabrasEncontradas
+            };
+            localStorage.setItem('sopaDeLetrasProgreso', JSON.stringify(progreso));
+        }
 
         // Generar la sopa de letras
         function generarSopa() {
@@ -337,13 +377,15 @@
             sopaActual++;
             if (sopaActual < listasPalabras.length) {
                 generarSopa();
+                guardarProgreso();  // Guardar el progreso después de cargar la sopa
             } else {
                 document.getElementById('mensaje').textContent = '¡Has completado todas las sopas!';
                 document.getElementById('botonSiguiente').disabled = true;
             }
         }
 
-        // Iniciar el juego con la primera sopa
+        // Iniciar el juego con el progreso guardado (si existe) o la primera sopa
+        cargarProgreso();
         generarSopa();
     </script>
 </body>
