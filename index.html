@@ -103,7 +103,7 @@
             color: #4CAF50;
         }
 
-        .boton-siguiente, .boton-restaurar {
+        .boton-siguiente, .boton-restaurar, .boton-reiniciar {
             margin-top: 20px;
             padding: 12px 24px;
             font-size: 16px;
@@ -124,6 +124,11 @@
             color: white;
         }
 
+        .boton-reiniciar {
+            background-color: #2196F3;
+            color: white;
+        }
+
         .boton-siguiente:hover {
             background-color: #45a049;
             transform: scale(1.1);
@@ -131,6 +136,11 @@
 
         .boton-restaurar:hover {
             background-color: #d32f2f;
+            transform: scale(1.1);
+        }
+
+        .boton-reiniciar:hover {
+            background-color: #1976D2;
             transform: scale(1.1);
         }
 
@@ -151,6 +161,7 @@
 
     <button class="boton-siguiente" id="botonSiguiente" onclick="cargarSopa()">Siguiente Sopa</button>
     <button class="boton-restaurar" id="botonRestaurar" onclick="restaurarSeleccion()" disabled>Restaurar Selección</button>
+    <button class="boton-reiniciar" id="botonReiniciar" onclick="reiniciarJuego()">Reiniciar Juego</button>
 
     <script>
         const listasPalabras = [
@@ -384,9 +395,20 @@
             }
         }
 
+        // Reiniciar el juego
+        function reiniciarJuego() {
+            sopaActual = 0;
+            palabrasEncontradas = [];
+            generarSopa();
+            document.getElementById('mensaje').textContent = '';
+            document.getElementById('botonSiguiente').disabled = true;
+            localStorage.removeItem('sopaDeLetrasProgreso');
+        }
+
         // Iniciar el juego con el progreso guardado (si existe) o la primera sopa
         cargarProgreso();
         generarSopa();
     </script>
 </body>
 </html>
+
