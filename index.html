@@ -103,7 +103,7 @@
             color: #4CAF50;
         }
 
-        .boton-siguiente, .boton-restaurar {
+        .boton-siguiente, .boton-restaurar, .boton-reiniciar {
             margin-top: 20px;
             padding: 12px 24px;
             font-size: 16px;
@@ -124,6 +124,11 @@
             color: white;
         }
 
+        .boton-reiniciar {
+            background-color: #2196F3;
+            color: white;
+        }
+
         .boton-siguiente:hover {
             background-color: #45a049;
             transform: scale(1.1);
@@ -134,7 +139,12 @@
             transform: scale(1.1);
         }
 
-        .boton-siguiente:disabled, .boton-restaurar:disabled {
+        .boton-reiniciar:hover {
+            background-color: #1976D2;
+            transform: scale(1.1);
+        }
+
+        .boton-siguiente:disabled, .boton-restaurar:disabled, .boton-reiniciar:disabled {
             background-color: #aaa;
             cursor: not-allowed;
         }
@@ -151,6 +161,7 @@
 
     <button class="boton-siguiente" id="botonSiguiente" onclick="cargarSopa()">Siguiente Sopa</button>
     <button class="boton-restaurar" id="botonRestaurar" onclick="restaurarSeleccion()" disabled>Restaurar Selección</button>
+    <button class="boton-reiniciar" id="botonReiniciar" onclick="reiniciarJuego()">Reiniciar Juego</button>
 
     <script>
         const listasPalabras = [
@@ -184,7 +195,22 @@
             ['espejo', 'ventana', 'puerta', 'pared', 'suelo', 'techo'],
             ['vino', 'cerveza', 'agua', 'jugos', 'refresco', 'leche'],
             ['actor', 'actriz', 'director', 'película', 'teatro', 'cine'],
-            ['rayo', 'trueno', 'lluvia', 'tormenta', 'huracán', 'terremoto']
+            ['rayo', 'trueno', 'lluvia', 'tormenta', 'huracán', 'terremoto'],
+            ['café', 'té', 'leche', 'zumo', 'jugo', 'agua'],
+            ['pantalla', 'teclado', 'ratón', 'cable', 'ordenador', 'silla'],
+            ['luna', 'sol', 'estrella', 'planeta', 'galaxia', 'satélite'],
+            ['película', 'actor', 'escena', 'guion', 'cine', 'teatro'],
+            ['zapato', 'camisa', 'pantalón', 'sombrero', 'chaqueta', 'bufanda'],
+            ['carro', 'bici', 'avión', 'barco', 'tren', 'autobús'],
+            ['mes', 'año', 'día', 'hora', 'minuto', 'segundo'],
+            ['rojo', 'verde', 'blanco', 'negro', 'azul', 'amarillo'],
+            ['agua', 'fuego', 'aire', 'tierra', 'lluvia', 'nieve'],
+            ['piedra', 'roca', 'arena', 'tierra', 'arcilla', 'lodo'],
+            ['cielo', 'nube', 'sol', 'lluvia', 'viento', 'trueno'],
+            ['alumno', 'profesor', 'clase', 'examen', 'libro', 'tarea'],
+            ['perro', 'gato', 'conejo', 'pájaro', 'pez', 'hamster'],
+            ['bajo', 'guitarra', 'batería', 'piano', 'violín', 'saxo'],
+            ['robo', 'delincuente', 'policía', 'criminal', 'coche', 'escape']
         ];
 
         const tamaño = 10;
@@ -340,51 +366,58 @@
                 marcarPalabraTachada(palabraSeleccionada);
 
                 seleccion = [];
-                document.getElementById('mensaje').textContent = '¡Palabra encontrada!';
+                document.getElementById('mensaje').textContent = '¡Palabra correcta!';
+                document.getElementById('botonSiguiente').disabled = false;
 
-                if (palabrasEncontradas.length === palabras.length) {
-                    document.getElementById('mensaje').textContent = '¡Felicidades! Has encontrado todas las palabras.';
-                    document.getElementById('botonSiguiente').disabled = false;
-                }
+                // Guardar progreso
+                guardarProgreso();
             } else {
-                document.getElementById('mensaje').textContent = 'Intenta nuevamente.';
+                document.getElementById('mensaje').textContent = 'Palabra incorrecta, intenta nuevamente.';
             }
         }
 
-        // Función para marcar la palabra tachada en la lista
+        // Marcar la palabra tachada en la lista de palabras
         function marcarPalabraTachada(palabra) {
             const palabrasDiv = document.getElementById('palabras');
-            const palabraDivs = palabrasDiv.querySelectorAll('.palabra');
+            const palabrasArray = Array.from(palabrasDiv.children);
 
-            palabraDivs.forEach(palabraDiv => {
+            palabrasArray.forEach(palabraDiv => {
                 if (palabraDiv.textContent === palabra) {
                     palabraDiv.classList.add('tachada');
                 }
             });
         }
 
-        // Función para restaurar la selección
+        // Función para restaurar la selección de celdas
         function restaurarSeleccion() {
             seleccion.forEach(s => {
                 s.celda.classList.remove('seleccionada');
             });
             seleccion = [];
-            document.getElementById('mensaje').textContent = '';
         }
 
         // Función para cargar la siguiente sopa
         function cargarSopa() {
             sopaActual++;
-            if (sopaActual < listasPalabras.length) {
-                generarSopa();
-                guardarProgreso();  // Guardar el progreso después de cargar la sopa
-            } else {
-                document.getElementById('mensaje').textContent = '¡Has completado todas las sopas!';
-                document.getElementById('botonSiguiente').disabled = true;
+            if (sopaActual >= listasPalabras.length) {
+                sopaActual = 0;
             }
+            generarSopa();
+            restaurarSeleccion();
+            document.getElementById('mensaje').textContent = '';
         }
 
-        // Iniciar el juego con el progreso guardado (si existe) o la primera sopa
+        // Reiniciar el juego
+        function reiniciarJuego() {
+            sopaActual = 0;
+            palabrasEncontradas = [];
+            localStorage.removeItem('sopaDeLetrasProgreso');
+            generarSopa();
+            restaurarSeleccion();
+            document.getElementById('mensaje').textContent = '';
+        }
+
+        // Cargar progreso al inicio y generar la primera sopa
         cargarProgreso();
         generarSopa();
     </script>
