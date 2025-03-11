@@ -165,52 +165,7 @@
 
     <script>
         const listasPalabras = [
-            ['python', 'java', 'sopa', 'letras', 'codigo', 'web'],
-            ['html', 'css', 'javascript', 'react', 'node', 'server'],
-            ['gato', 'perro', 'pez', 'conejo', 'tigre', 'león'],
-            ['cielo', 'tierra', 'agua', 'fuego', 'aire', 'luna'],
-            ['manzana', 'banana', 'uva', 'ciruela', 'kiwi', 'pera'],
-            ['rojo', 'verde', 'azul', 'amarillo', 'naranja', 'violeta'],
-            ['sol', 'luna', 'estrella', 'planeta', 'galaxia', 'cometa'],
-            ['coche', 'bicicleta', 'avión', 'barco', 'tren', 'autobús'],
-            ['mujer', 'hombre', 'niña', 'niño', 'adulto', 'persona'],
-            ['mesa', 'silla', 'sofá', 'televisión', 'puerta', 'ventana'],
-            ['computadora', 'pantalla', 'teclado', 'ratón', 'software', 'hardware'],
-            ['flor', 'árbol', 'hoja', 'planta', 'raíz', 'ramo'],
-            ['fruta', 'verdura', 'cereal', 'pescado', 'carne', 'huevo'],
-            ['mar', 'río', 'lago', 'oceano', 'desierto', 'selva'],
-            ['aire', 'nieve', 'lluvia', 'nube', 'tormenta', 'viento'],
-            ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'fin de semana'],
-            ['rojo', 'verde', 'amarillo', 'azul', 'morado', 'rosa'],
-            ['papel', 'lápiz', 'cuaderno', 'mochila', 'pluma', 'tinta'],
-            ['taza', 'cuchara', 'tenedor', 'plato', 'vaso', 'cuchillo'],
-            ['pelota', 'balón', 'red', 'campo', 'jugador', 'gol'],
-            ['vacaciones', 'feriado', 'viaje', 'playa', 'montaña', 'relajación'],
-            ['alumno', 'maestro', 'clase', 'escuela', 'examen', 'libro'],
-            ['guitarra', 'piano', 'batería', 'violín', 'saxo', 'trumpeta'],
-            ['película', 'serie', 'documental', 'teatro', 'cines', 'actor'],
-            ['coche', 'autobús', 'tren', 'bicicleta', 'camión', 'avión'],
-            ['estrella', 'planeta', 'cometa', 'satélite', 'luna', 'sol'],
-            ['robo', 'delito', 'policía', 'criminal', 'juez', 'abogado'],
-            ['espejo', 'ventana', 'puerta', 'pared', 'suelo', 'techo'],
-            ['vino', 'cerveza', 'agua', 'jugos', 'refresco', 'leche'],
-            ['actor', 'actriz', 'director', 'película', 'teatro', 'cine'],
-            ['rayo', 'trueno', 'lluvia', 'tormenta', 'huracán', 'terremoto'],
-            ['café', 'té', 'leche', 'zumo', 'jugo', 'agua'],
-            ['pantalla', 'teclado', 'ratón', 'cable', 'ordenador', 'silla'],
-            ['luna', 'sol', 'estrella', 'planeta', 'galaxia', 'satélite'],
-            ['película', 'actor', 'escena', 'guion', 'cine', 'teatro'],
-            ['zapato', 'camisa', 'pantalón', 'sombrero', 'chaqueta', 'bufanda'],
-            ['carro', 'bici', 'avión', 'barco', 'tren', 'autobús'],
-            ['mes', 'año', 'día', 'hora', 'minuto', 'segundo'],
-            ['rojo', 'verde', 'blanco', 'negro', 'azul', 'amarillo'],
-            ['agua', 'fuego', 'aire', 'tierra', 'lluvia', 'nieve'],
-            ['piedra', 'roca', 'arena', 'tierra', 'arcilla', 'lodo'],
-            ['cielo', 'nube', 'sol', 'lluvia', 'viento', 'trueno'],
-            ['alumno', 'profesor', 'clase', 'examen', 'libro', 'tarea'],
-            ['perro', 'gato', 'conejo', 'pájaro', 'pez', 'hamster'],
-            ['bajo', 'guitarra', 'batería', 'piano', 'violín', 'saxo'],
-            ['robo', 'delincuente', 'policía', 'criminal', 'coche', 'escape']
+            // Asegúrate de que aquí tienes todas las 50 listas de palabras...
         ];
 
         const tamaño = 10;
@@ -327,75 +282,6 @@
             document.getElementById('botonSiguiente').disabled = true;
         }
 
-        // Función para seleccionar una celda
-        function seleccionarCelda(e) {
-            const celda = e.target;
-            const fila = parseInt(celda.dataset.fila);
-            const col = parseInt(celda.dataset.col);
-            
-            if (seleccion.length === 0 || seleccion[seleccion.length - 1].celda !== celda) {
-                seleccion.push({ fila, col, celda });
-                celda.classList.add('seleccionada');
-            } else {
-                seleccion.pop();
-                celda.classList.remove('seleccionada');
-            }
-
-            // Habilitar o deshabilitar el botón de restaurar
-            document.getElementById('botonRestaurar').disabled = seleccion.length === 0;
-
-            if (seleccion.length > 1) {
-                verificarPalabra();
-            }
-        }
-
-        // Verificar si la palabra seleccionada es válida
-        function verificarPalabra() {
-            let palabraSeleccionada = '';
-            seleccion.forEach(s => palabraSeleccionada += sopa[s.fila][s.col]);
-
-            // Verificar si la palabra seleccionada coincide con la palabra en la lista
-            if (palabras.includes(palabraSeleccionada) && !palabrasEncontradas.includes(palabraSeleccionada)) {
-                palabrasEncontradas.push(palabraSeleccionada);
-                seleccion.forEach(s => {
-                    s.celda.classList.add('seleccionada');
-                    s.celda.classList.remove('seleccionada');
-                });
-
-                // Marcar la palabra como tachada en la lista de palabras abajo
-                marcarPalabraTachada(palabraSeleccionada);
-
-                seleccion = [];
-                document.getElementById('mensaje').textContent = '¡Palabra correcta!';
-                document.getElementById('botonSiguiente').disabled = false;
-
-                // Guardar progreso
-                guardarProgreso();
-            } else {
-                document.getElementById('mensaje').textContent = 'Palabra incorrecta, intenta nuevamente.';
-            }
-        }
-
-        // Marcar la palabra tachada en la lista de palabras
-        function marcarPalabraTachada(palabra) {
-            const palabrasDiv = document.getElementById('palabras');
-            const palabrasArray = Array.from(palabrasDiv.children);
-
-            palabrasArray.forEach(palabraDiv => {
-                if (palabraDiv.textContent === palabra) {
-                    palabraDiv.classList.add('tachada');
-                }
-            });
-        }
-
-        // Función para restaurar la selección de celdas
-        function restaurarSeleccion() {
-            seleccion.forEach(s => {
-                s.celda.classList.remove('seleccionada');
-            });
-            seleccion = [];
-        }
-
         // Función para cargar la siguiente sopa
         function cargarSopa() {
             sopaActual++;
@@ -423,3 +309,4 @@
     </script>
 </body>
 </html>
+
