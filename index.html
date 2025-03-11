@@ -103,7 +103,7 @@
             color: #4CAF50;
         }
 
-        .boton-siguiente, .boton-restaurar, .boton-reiniciar {
+        .boton-siguiente, .boton-restaurar {
             margin-top: 20px;
             padding: 12px 24px;
             font-size: 16px;
@@ -124,11 +124,6 @@
             color: white;
         }
 
-        .boton-reiniciar {
-            background-color: #2196F3;
-            color: white;
-        }
-
         .boton-siguiente:hover {
             background-color: #45a049;
             transform: scale(1.1);
@@ -139,12 +134,7 @@
             transform: scale(1.1);
         }
 
-        .boton-reiniciar:hover {
-            background-color: #1976D2;
-            transform: scale(1.1);
-        }
-
-        .boton-siguiente:disabled, .boton-restaurar:disabled, .boton-reiniciar:disabled {
+        .boton-siguiente:disabled, .boton-restaurar:disabled {
             background-color: #aaa;
             cursor: not-allowed;
         }
@@ -161,15 +151,44 @@
 
     <button class="boton-siguiente" id="botonSiguiente" onclick="cargarSopa()">Siguiente Sopa</button>
     <button class="boton-restaurar" id="botonRestaurar" onclick="restaurarSeleccion()" disabled>Restaurar Selección</button>
-    <button class="boton-reiniciar" id="botonReiniciar" onclick="reiniciarJuego()">Reiniciar Juego</button>
 
     <script>
         const listasPalabras = [
-            // Asegúrate de que aquí tienes todas las 50 listas de palabras...
+            ['python', 'java', 'sopa', 'letras', 'codigo', 'web'],
+            ['html', 'css', 'javascript', 'react', 'node', 'server'],
+            ['gato', 'perro', 'pez', 'conejo', 'tigre', 'león'],
+            ['cielo', 'tierra', 'agua', 'fuego', 'aire', 'luna'],
+            ['manzana', 'banana', 'uva', 'ciruela', 'kiwi', 'pera'],
+            ['rojo', 'verde', 'azul', 'amarillo', 'naranja', 'violeta'],
+            ['sol', 'luna', 'estrella', 'planeta', 'galaxia', 'cometa'],
+            ['coche', 'bicicleta', 'avión', 'barco', 'tren', 'autobús'],
+            ['mujer', 'hombre', 'niña', 'niño', 'adulto', 'persona'],
+            ['mesa', 'silla', 'sofá', 'televisión', 'puerta', 'ventana'],
+            ['computadora', 'pantalla', 'teclado', 'ratón', 'software', 'hardware'],
+            ['flor', 'árbol', 'hoja', 'planta', 'raíz', 'ramo'],
+            ['fruta', 'verdura', 'cereal', 'pescado', 'carne', 'huevo'],
+            ['mar', 'río', 'lago', 'oceano', 'desierto', 'selva'],
+            ['aire', 'nieve', 'lluvia', 'nube', 'tormenta', 'viento'],
+            ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'fin de semana'],
+            ['rojo', 'verde', 'amarillo', 'azul', 'morado', 'rosa'],
+            ['papel', 'lápiz', 'cuaderno', 'mochila', 'pluma', 'tinta'],
+            ['taza', 'cuchara', 'tenedor', 'plato', 'vaso', 'cuchillo'],
+            ['pelota', 'balón', 'red', 'campo', 'jugador', 'gol'],
+            ['vacaciones', 'feriado', 'viaje', 'playa', 'montaña', 'relajación'],
+            ['alumno', 'maestro', 'clase', 'escuela', 'examen', 'libro'],
+            ['guitarra', 'piano', 'batería', 'violín', 'saxo', 'trumpeta'],
+            ['película', 'serie', 'documental', 'teatro', 'cines', 'actor'],
+            ['coche', 'autobús', 'tren', 'bicicleta', 'camión', 'avión'],
+            ['estrella', 'planeta', 'cometa', 'satélite', 'luna', 'sol'],
+            ['robo', 'delito', 'policía', 'criminal', 'juez', 'abogado'],
+            ['espejo', 'ventana', 'puerta', 'pared', 'suelo', 'techo'],
+            ['vino', 'cerveza', 'agua', 'jugos', 'refresco', 'leche'],
+            ['actor', 'actriz', 'director', 'película', 'teatro', 'cine'],
+            ['rayo', 'trueno', 'lluvia', 'tormenta', 'huracán', 'terremoto']
         ];
 
         const tamaño = 10;
-        const letras = 'abcdefghijklmnopqrstuvwxyz'.split(''); 
+        const letras = 'abcdefghijklmnopqrstuvwxyz'.split('');
         let sopa = [];
         let seleccion = [];
         let palabrasEncontradas = [];
@@ -282,31 +301,92 @@
             document.getElementById('botonSiguiente').disabled = true;
         }
 
+        // Función para seleccionar una celda
+        function seleccionarCelda(e) {
+            const celda = e.target;
+            const fila = parseInt(celda.dataset.fila);
+            const col = parseInt(celda.dataset.col);
+            
+            if (seleccion.length === 0 || seleccion[seleccion.length - 1].celda !== celda) {
+                seleccion.push({ fila, col, celda });
+                celda.classList.add('seleccionada');
+            } else {
+                seleccion.pop();
+                celda.classList.remove('seleccionada');
+            }
+
+            // Habilitar o deshabilitar el botón de restaurar
+            document.getElementById('botonRestaurar').disabled = seleccion.length === 0;
+
+            if (seleccion.length > 1) {
+                verificarPalabra();
+            }
+        }
+
+        // Verificar si la palabra seleccionada es válida
+        function verificarPalabra() {
+            let palabraSeleccionada = '';
+            seleccion.forEach(s => palabraSeleccionada += sopa[s.fila][s.col]);
+
+            // Verificar si la palabra seleccionada coincide con la palabra en la lista
+            if (palabras.includes(palabraSeleccionada) && !palabrasEncontradas.includes(palabraSeleccionada)) {
+                palabrasEncontradas.push(palabraSeleccionada);
+                seleccion.forEach(s => {
+                    s.celda.classList.add('seleccionada');
+                    s.celda.classList.remove('seleccionada');
+                });
+
+                // Marcar la palabra como tachada en la lista de palabras abajo
+                marcarPalabraTachada(palabraSeleccionada);
+
+                seleccion = [];
+                document.getElementById('mensaje').textContent = '¡Palabra encontrada!';
+
+                if (palabrasEncontradas.length === palabras.length) {
+                    document.getElementById('mensaje').textContent = '¡Felicidades! Has encontrado todas las palabras.';
+                    document.getElementById('botonSiguiente').disabled = false;
+                }
+            } else {
+                document.getElementById('mensaje').textContent = 'Intenta nuevamente.';
+            }
+        }
+
+        // Función para marcar la palabra tachada en la lista
+        function marcarPalabraTachada(palabra) {
+            const palabrasDiv = document.getElementById('palabras');
+            const palabraDivs = palabrasDiv.querySelectorAll('.palabra');
+
+            palabraDivs.forEach(palabraDiv => {
+                if (palabraDiv.textContent === palabra) {
+                    palabraDiv.classList.add('tachada');
+                }
+            });
+        }
+
+        // Función para restaurar la selección
+        function restaurarSeleccion() {
+            seleccion.forEach(s => {
+                s.celda.classList.remove('seleccionada');
+            });
+            seleccion = [];
+            document.getElementById('mensaje').textContent = '';
+        }
+
         // Función para cargar la siguiente sopa
         function cargarSopa() {
             sopaActual++;
-            if (sopaActual >= listasPalabras.length) {
-                sopaActual = 0;
+            if (sopaActual < listasPalabras.length) {
+                generarSopa();
+                guardarProgreso();  // Guardar el progreso después de cargar la sopa
+            } else {
+                document.getElementById('mensaje').textContent = '¡Has completado todas las sopas!';
+                document.getElementById('botonSiguiente').disabled = true;
             }
-            generarSopa();
-            restaurarSeleccion();
-            document.getElementById('mensaje').textContent = '';
         }
 
-        // Reiniciar el juego
-        function reiniciarJuego() {
-            sopaActual = 0;
-            palabrasEncontradas = [];
-            localStorage.removeItem('sopaDeLetrasProgreso');
-            generarSopa();
-            restaurarSeleccion();
-            document.getElementById('mensaje').textContent = '';
-        }
-
-        // Cargar progreso al inicio y generar la primera sopa
+        // Iniciar el juego con el progreso guardado (si existe) o la primera sopa
         cargarProgreso();
         generarSopa();
     </script>
 </body>
 </html>
-
