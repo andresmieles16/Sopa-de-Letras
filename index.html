@@ -289,7 +289,7 @@
                 }
             });
 
-            // Rellenar el resto de la sopa con letras aleatorias
+            // Rellenar con letras aleatorias
             for (let i = 0; i < tamaño; i++) {
                 for (let j = 0; j < tamaño; j++) {
                     if (sopa[i][j] === ' ') {
@@ -298,128 +298,82 @@
                 }
             }
 
-            // Mostrar la sopa en el HTML
+            // Mostrar la sopa
+            mostrarSopa();
+            mostrarPalabras();
+        }
+
+        // Mostrar sopa en HTML
+        function mostrarSopa() {
             const sopaDiv = document.getElementById('sopa');
             sopaDiv.innerHTML = '';
-            for (let i = 0; i < tamaño; i++) {
-                for (let j = 0; j < tamaño; j++) {
+
+            sopa.forEach((fila, filaIndex) => {
+                fila.forEach((letra, colIndex) => {
                     const celda = document.createElement('div');
                     celda.classList.add('celda');
-                    celda.textContent = sopa[i][j];
-                    celda.dataset.fila = i;
-                    celda.dataset.col = j;
-                    celda.addEventListener('click', seleccionarCelda);
+                    celda.textContent = letra;
+                    celda.addEventListener('click', () => seleccionarCelda(filaIndex, colIndex));
                     sopaDiv.appendChild(celda);
-                }
-            }
+                });
+            });
+        }
 
-            // Mostrar las palabras a encontrar
+        // Mostrar las palabras en la lista
+        function mostrarPalabras() {
             const palabrasDiv = document.getElementById('palabras');
             palabrasDiv.innerHTML = '';
+
             palabras.forEach(palabra => {
-                const palabraDiv = document.createElement('div');
+                const palabraDiv = document.createElement('span');
                 palabraDiv.classList.add('palabra');
                 palabraDiv.textContent = palabra;
                 palabrasDiv.appendChild(palabraDiv);
             });
-
-            // Deshabilitar el botón hasta que todas las palabras sean encontradas
-            document.getElementById('botonSiguiente').disabled = true;
         }
 
-        // Función para seleccionar una celda
-        function seleccionarCelda(e) {
-            const celda = e.target;
-            const fila = parseInt(celda.dataset.fila);
-            const col = parseInt(celda.dataset.col);
-            
-            if (seleccion.length === 0 || seleccion[seleccion.length - 1].celda !== celda) {
-                seleccion.push({ fila, col, celda });
-                celda.classList.add('seleccionada');
+        // Seleccionar una celda
+        function seleccionarCelda(fila, col) {
+            const letra = sopa[fila][col];
+            if (seleccion.length === 0) {
+                seleccion.push({ fila, col, letra });
+                document.getElementById('mensaje').textContent = `Selecciona otra letra de la palabra: ${letra}`;
             } else {
-                seleccion.pop();
-                celda.classList.remove('seleccionada');
-            }
-
-            // Habilitar o deshabilitar el botón de restaurar
-            document.getElementById('botonRestaurar').disabled = seleccion.length === 0;
-
-            if (seleccion.length > 1) {
-                verificarPalabra();
-            }
-        }
-
-        // Verificar si la palabra seleccionada es válida
-        function verificarPalabra() {
-            let palabraSeleccionada = '';
-            seleccion.forEach(s => palabraSeleccionada += sopa[s.fila][s.col]);
-
-            // Verificar si la palabra seleccionada coincide con la palabra en la lista
-            if (palabras.includes(palabraSeleccionada) && !palabrasEncontradas.includes(palabraSeleccionada)) {
-                palabrasEncontradas.push(palabraSeleccionada);
-                seleccion.forEach(s => {
-                    s.celda.classList.add('seleccionada');
-                    s.celda.classList.remove('seleccionada');
-                });
-
-                // Marcar la palabra como tachada en la lista de palabras abajo
-                marcarPalabraTachada(palabraSeleccionada);
-
-                seleccion = [];
-                document.getElementById('mensaje').textContent = '¡Palabra correcta!';
-                document.getElementById('botonSiguiente').disabled = false;
-
-                // Guardar progreso
-                guardarProgreso();
-            } else {
-                document.getElementById('mensaje').textContent = 'Palabra incorrecta, intenta nuevamente.';
-            }
-        }
-
-        // Marcar la palabra tachada en la lista de palabras
-        function marcarPalabraTachada(palabra) {
-            const palabrasDiv = document.getElementById('palabras');
-            const palabrasArray = Array.from(palabrasDiv.children);
-
-            palabrasArray.forEach(palabraDiv => {
-                if (palabraDiv.textContent === palabra) {
-                    palabraDiv.classList.add('tachada');
+                if (seleccion[0].letra === letra) {
+                    sopa[fila][col] = letra.toUpperCase();
+                    seleccion.push({ fila, col, letra });
+                    if (seleccion.length === palabras[palabrasEncontradas.length].length) {
+                        palabrasEncontradas.push(palabras[palabrasEncontradas.length]);
+                        if (palabrasEncontradas.length === palabras.length) {
+                            document.getElementById('mensaje').textContent = '¡Felicidades, completaste la sopa!';
+                        }
+                    }
+                } else {
+                    restaurarSeleccion();
                 }
-            });
-        }
-
-        // Función para restaurar la selección de celdas
-        function restaurarSeleccion() {
-            seleccion.forEach(s => {
-                s.celda.classList.remove('seleccionada');
-            });
-            seleccion = [];
-        }
-
-        // Función para cargar la siguiente sopa
-        function cargarSopa() {
-            sopaActual++;
-            if (sopaActual >= listasPalabras.length) {
-                sopaActual = 0;
             }
-            generarSopa();
-            restaurarSeleccion();
-            document.getElementById('mensaje').textContent = '';
+        }
+
+        // Restaurar selección
+        function restaurarSeleccion() {
+            seleccion = [];
+            mostrarSopa();
         }
 
         // Reiniciar el juego
         function reiniciarJuego() {
             sopaActual = 0;
             palabrasEncontradas = [];
-            localStorage.removeItem('sopaDeLetrasProgreso');
-            generarSopa();
-            restaurarSeleccion();
-            document.getElementById('mensaje').textContent = '';
+            cargarSopa();
         }
 
-        // Cargar progreso al inicio y generar la primera sopa
-        cargarProgreso();
-        generarSopa();
+        // Cargar la sopa de letras inicial
+        function cargarSopa() {
+            cargarProgreso();
+            generarSopa();
+        }
+
+        cargarSopa();
     </script>
 </body>
 </html>
