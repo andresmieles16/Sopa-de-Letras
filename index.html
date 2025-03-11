@@ -103,7 +103,7 @@
             color: #4CAF50;
         }
 
-        .boton-siguiente, .boton-restaurar, .boton-reiniciar {
+        .boton-siguiente, .boton-restaurar {
             margin-top: 20px;
             padding: 12px 24px;
             font-size: 16px;
@@ -124,11 +124,6 @@
             color: white;
         }
 
-        .boton-reiniciar {
-            background-color: #2196F3;
-            color: white;
-        }
-
         .boton-siguiente:hover {
             background-color: #45a049;
             transform: scale(1.1);
@@ -139,20 +134,24 @@
             transform: scale(1.1);
         }
 
-        .boton-reiniciar:hover {
-            background-color: #1976D2;
-            transform: scale(1.1);
-        }
-
         .boton-siguiente:disabled, .boton-restaurar:disabled {
             background-color: #aaa;
             cursor: not-allowed;
+        }
+
+        .progreso {
+            font-size: 18px;
+            color: #4CAF50;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
 
     <h1>Sopa de Letras</h1>
+
+    <div class="progreso" id="progreso"></div> <!-- Aquí se muestra el progreso de las sopas -->
+
     <div class="sopa" id="sopa"></div>
 
     <div class="palabras" id="palabras"></div>
@@ -161,7 +160,6 @@
 
     <button class="boton-siguiente" id="botonSiguiente" onclick="cargarSopa()">Siguiente Sopa</button>
     <button class="boton-restaurar" id="botonRestaurar" onclick="restaurarSeleccion()" disabled>Restaurar Selección</button>
-    <button class="boton-reiniciar" id="botonReiniciar" onclick="reiniciarJuego()">Reiniciar Juego</button>
 
     <script>
         const listasPalabras = [
@@ -199,7 +197,7 @@
         ];
 
         const tamaño = 10;
-        const letras = 'abcdefghijklmnopqrstuvwxyz'.split('');
+        const letras = 'abcdefghijklmnopqrstuvwxyz'.split(''); 
         let sopa = [];
         let seleccion = [];
         let palabrasEncontradas = [];
@@ -222,6 +220,12 @@
                 palabrasEncontradas: palabrasEncontradas
             };
             localStorage.setItem('sopaDeLetrasProgreso', JSON.stringify(progreso));
+        }
+
+        // Mostrar el progreso en la página
+        function mostrarProgreso() {
+            const progresoDiv = document.getElementById('progreso');
+            progresoDiv.textContent = `Sopa ${sopaActual + 1} de ${listasPalabras.length}`;
         }
 
         // Generar la sopa de letras
@@ -310,6 +314,9 @@
 
             // Deshabilitar el botón hasta que todas las palabras sean encontradas
             document.getElementById('botonSiguiente').disabled = true;
+
+            // Mostrar el progreso de las sopas
+            mostrarProgreso();
         }
 
         // Función para seleccionar una celda
@@ -395,20 +402,9 @@
             }
         }
 
-        // Reiniciar el juego
-        function reiniciarJuego() {
-            sopaActual = 0;
-            palabrasEncontradas = [];
-            generarSopa();
-            document.getElementById('mensaje').textContent = '';
-            document.getElementById('botonSiguiente').disabled = true;
-            localStorage.removeItem('sopaDeLetrasProgreso');
-        }
-
         // Iniciar el juego con el progreso guardado (si existe) o la primera sopa
         cargarProgreso();
         generarSopa();
     </script>
 </body>
 </html>
-
